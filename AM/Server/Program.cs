@@ -1,9 +1,11 @@
 global using Microsoft.EntityFrameworkCore;
 global using AM.Server.Data;
 global using AM.Server.Data.DataModel;
+global using AutoMapper;
 
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Text.Json.Serialization;
+using AM.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApartmentDB>(opt =>
 {
-    opt.UseNpgsql(cs);
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);   // time local baraye NPGSQl sabt mishavad. agar nabashad time utc mokafar sabt mikonad
 
@@ -34,6 +35,12 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 //The exceptions can be resolved by using Entity Framework migrations.
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddAutoMapper(typeof(Program));
+var mapperConfig = new MapperConfiguration(mc => {
+    mc.AddProfile(new MapProfile());
+});
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 
 var app = builder.Build();
