@@ -1,0 +1,81 @@
+﻿@page "/User/NewAdmin"
+@inject IUserHttpService _user
+
+<h3>ایجاد کاربر ادمین</h3>
+
+<div class="row">
+    <div class="col-lg-6">
+        <EditForm Model="newUser" OnValidSubmit="HandelUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+
+            <div class="form-group">
+                <label for="Name">نام</label>
+                <InputText class="form-control form-control-sm" id="Name" @bind-Value="newUser.Name" placeholder="نام" aria-describedby="نام کاربر جدید" />
+
+            </div>
+            <div class="form-group">
+                <label for="Family">نام خانوادگی</label>
+                <InputText class="form-control form-control-sm" id="Family" @bind-Value="newUser.Family" placeholder="نام خانوادگی" aria-describedby="نام خانوادگی کاربر جدید" />
+
+            </div>
+            <div class="form-group">
+                <label for="Username">نام کاربری</label>
+                <InputText class="form-control form-control-sm" id="Username" @bind-Value="newUser.Username" placeholder="نام کاربری" aria-describedby="نام کاربری کاربر جدید" />
+
+            </div>
+            <div class="form-group">
+                <label for="password">رمز عبور</label>
+                <InputText type="password" class="form-control form-control-sm" id="password" @bind-Value="newUser.Password" placeholder="نام کاربری" aria-describedby="رمز عبور" />
+            </div>
+            <div class="form-group">
+                <label for="trypassword">تکرار رمزعبور</label>
+                <InputText type="password" class="form-control form-control-sm" id="trypassword" @bind-Value="newUser.ConfirmPassword" placeholder="تکرار رمزعبور" aria-describedby="تکرار رمزعبور" />
+
+            </div>
+            <div class="form-group">
+                <label for="Mobile">تلفن همراه</label>
+                <InputText class="form-control form-control-sm" id="Mobile" @bind-Value="newUser.Mobile" placeholder="تلفن همراه ادمین" aria-describedby="تلفن همراه ادمین" />
+
+            </div>      
+            <div class="form-group">
+                <label for="Email">ایمیل</label>
+                <InputText class="form-control form-control-sm" id="Email" @bind-Value="newUser.Email" placeholder="ایمیل " aria-describedby="ایمیل" />
+
+            </div>
+            <div class="row" style="margin-top:20px;">
+                <div class="col-md-6">
+                    <LoaderSpinner ButtonTitle="ثبت کاربر" Request=sendRequest btnType="btn-success" />
+
+                </div>
+
+            </div>
+        </EditForm>
+    </div>
+
+</div>
+
+
+@code {
+    UserDto newUser = new UserDto();
+    bool sendRequest = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+         await _user.CheckUserIs();
+    }
+
+    async Task HandelUser()
+    {
+        sendRequest = true;
+
+        var state = await _user.CreateAdminUser(newUser);
+
+        if (state)
+        {
+            newUser = new UserDto();
+        }
+        sendRequest = false;
+    }
+}

@@ -1,0 +1,31 @@
+﻿<button class="btn @btnType" type="submit">
+
+    @if (Request)
+    {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span>
+            @MessageLoad
+        </span>
+
+    }
+    else
+    {
+        @ButtonTitle
+    }
+
+
+
+</button>
+
+
+
+@code {
+    [Parameter]
+    public string ButtonTitle { get; set; } = string.Empty;
+    [Parameter]
+    public bool Request { get; set; } = false;
+    [Parameter]
+    public string btnType { get; set; } = "btn-primary";
+    [Parameter]
+    public string MessageLoad { get; set; } = "صبرکنید...";
+}

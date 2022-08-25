@@ -1,7 +1,30 @@
 ﻿@page "/"
+@inject IUserHttpService _user
 
 <PageTitle>Index</PageTitle>
 
 <h1>سلام!</h1>
 
 به برنامه آپارتمان من خوش آمدید.
+
+@isUser
+
+@code{
+    string isUser = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var check = await _user.CheckUserIs();
+
+        if(check == true){
+            isUser = "کاربر وجود دارد";
+        }
+        else if(check == false){
+            isUser = "کاربر نیست";
+        }
+        else{
+            isUser = "خطا در دریافت اطلاعات";
+        }
+    }
+
+}

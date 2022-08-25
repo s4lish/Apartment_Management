@@ -2,6 +2,11 @@ global using Microsoft.EntityFrameworkCore;
 global using AM.Server.Data;
 global using AM.Server.Data.DataModel;
 global using AutoMapper;
+global using AM.Shared.ViewModel;
+
+global using AM.Server.Services.UserService;
+global using AM.Server.Services.PublicService;
+
 
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Text.Json.Serialization;
@@ -41,6 +46,11 @@ var mapperConfig = new MapperConfiguration(mc => {
 });
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+
+builder.Services.AddScoped<IPublicService, PubliceService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 
 var app = builder.Build();
