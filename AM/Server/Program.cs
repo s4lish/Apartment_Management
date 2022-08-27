@@ -51,8 +51,6 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<IPublicService, PubliceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,5 +76,11 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<ApartmentDB>();
+    dataContext.Database.Migrate();
+}
 
 app.Run();

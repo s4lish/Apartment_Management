@@ -1,0 +1,9 @@
+{
+  "netcore": {
+    "version": "6.0",
+    "finalDllName": "AM.Server",
+    "csprojectFile": "AM/Server/AM.Server.csproj"
+  },
+"port": "5004",
+ "app": "apartment"
+}
