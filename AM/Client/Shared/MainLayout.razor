@@ -1,19 +1,39 @@
 ﻿@inherits LayoutComponentBase
 
-
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <BlazoredToasts />
+
+    <Sidebar SideMenu="CloseSide" />
 
     <main>
-        <div class="top-row px-4">
-            <BlazoredToasts />
+        <CascadingValue Value="this">
+            <div class="top-row">
+                <p style="margin:0 auto;color:aliceblue;">@PageName</p>
+            </div>
+            <article class="content" @onclick="CloseSideMenu">
+                @Body
+            </article>
+        </CascadingValue>
 
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
     </main>
 </div>
+
+@code{
+    private string PageName;
+    private bool CloseSide { get; set; } = false;
+    public string Title
+    {
+        get => PageName;
+        set
+        {
+            PageName = value;
+            InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    private void CloseSideMenu(){
+
+        CloseSide = !CloseSide;
+    }
+}

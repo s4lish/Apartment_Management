@@ -1,0 +1,60 @@
+﻿<input type="checkbox" class="openSidebarMenu" id="openSidebarMenu" @bind="_Value" />
+<label for="openSidebarMenu" class="sidebarIconToggle" @onclick="()=> SideMenu = !SideMenu">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+</label>
+<div class="sdbar" id="sidebarMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> صفحه اصلی
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="help">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> راهنما
+            </NavLink>
+        </div>
+        @*    <div class="nav-item px-3">
+        <NavLink class="nav-link" href="fetchdata">
+        <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+        </NavLink>
+        </div>*@
+    </nav>
+</div>
+
+@code {
+    [Parameter]
+    public bool SideMenu { get; set; }
+
+    private bool _value;
+    private bool _Value
+    {
+        get => _value;
+        set
+        {
+            if (_value != value)
+            {
+                _value = value;
+                SideEffect();
+                //  ValueChanged.InvokeAsync(_value);
+            }
+        }
+    }
+
+    public void SideEffect()
+    {
+        Console.WriteLine($"Parameter has changed: {_Value}"); //i want this method executed when value changes from parent
+
+    }
+
+
+
+    protected override void OnParametersSet()
+    {
+
+            _Value = false;
+        
+    }
+}

@@ -1,15 +1,22 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import 'font.css';
 
+@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+
 html, body {
     font-family: IRANSans;
     font-weight: 300;
     height: 100%;
 }
 
-h1:focus {
-    outline: none;
+#app,.page,main {
+    height: 100%;
 }
+
+
+    h1:focus {
+        outline: none;
+    }
 
 a, .btn-link {
     color: #0071c1;
@@ -65,3 +72,9 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* Side bar*/
+
+/*.content:active ~ .sdbar {
+    right: 20px;
+}*/
