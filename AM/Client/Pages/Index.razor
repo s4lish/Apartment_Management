@@ -1,19 +1,20 @@
 ﻿@page "/"
 @inject IUserHttpService _user
 
-<h1>سلام!</h1>
-
+<h1> سلام 6745!</h1>
 به برنامه آپارتمان من خوش آمدید.
 
 @isUser
 
 @code{
-    string isUser = "";
     [CascadingParameter]
-    public MainLayout Layout { get; set; }
+    public MainLayout Layout { get; set; } = new MainLayout();
+
+    string isUser = "";
 
     protected override async Task OnInitializedAsync()
     {
+     
         Layout.Title = "صفحه اصلی";
         var check = await _user.CheckUserIs();
 

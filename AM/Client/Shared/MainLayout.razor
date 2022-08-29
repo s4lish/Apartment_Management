@@ -1,17 +1,41 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <BlazoredToasts />
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <Sidebar SideMenu="CloseSide" />
+<BlazoredToasts />
+<UpdateAvailableDetector />
+
+<div class="page">
 
     <main>
         <CascadingValue Value="this">
-            <div class="top-row">
-                <p style="margin:0 auto;color:aliceblue;">@PageName</p>
-            </div>
-            <article class="content" @onclick="CloseSideMenu">
-                @Body
+            <article class="content">
+                <MudLayout>
+                    <MudAppBar Elevation="1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                        <MudText Typo="Typo.h6" Class="ml-3">@PageName</MudText>
+                        <MudSpacer />
+                    </MudAppBar>
+                    <MudDrawer @bind-Open="@_drawerOpen"  ClipMode="DrawerClipMode.Always" Elevation="2">
+                        <MudNavMenu>
+                        <MudNavLink Href="/" Match="NavLinkMatch.All">صفحه اصلی</MudNavLink>
+                        <MudNavLink Href="help">راهنما</MudNavLink>
+                        <MudNavGroup Title="تنظیمات" Expanded="false">
+                            <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
+                            <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
+                        </MudNavGroup>
+                        <MudNavLink Href="unit">واحد</MudNavLink>
+                    </MudNavMenu>
+
+
+                        <div style="bottom:10px;margin-right:10px;position: absolute; font-size:12px;">نسخه 1.3</div>
+                    </MudDrawer>
+                    <MudMainContent>
+                        @Body
+                    </MudMainContent>
+                </MudLayout>
             </article>
         </CascadingValue>
 
@@ -20,8 +44,12 @@
 </div>
 
 @code{
-    private string PageName;
-    private bool CloseSide { get; set; } = false;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    bool _drawerOpen = false;
+    private string PageName = string.Empty;
     public string Title
     {
         get => PageName;
@@ -32,8 +60,9 @@
         }
     }
 
-    private void CloseSideMenu(){
-
-        CloseSide = !CloseSide;
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
     }
+
 }

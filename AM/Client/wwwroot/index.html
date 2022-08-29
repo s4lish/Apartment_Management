@@ -7,13 +7,14 @@
     <title>آپارتمان من</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
     <link href="AM.Client.styles.css" rel="stylesheet" />
     <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="apartment.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="apartment192.png" />
 </head>
 
 <body style="direction:rtl;">
@@ -25,7 +26,9 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <!--<script>navigator.serviceWorker.register('service-worker.js');</script>-->
+    <script src="sw-registrator.js"></script>
 </body>
 
 </html>

@@ -61,9 +61,13 @@
     UserDto newUser = new UserDto();
     bool sendRequest = false;
 
-    protected override async Task OnInitializedAsync()
+    [CascadingParameter]
+    public MainLayout Layout { get; set; } = new MainLayout();
+
+
+    protected override void OnInitialized()
     {
-         await _user.CheckUserIs();
+        Layout.Title = "ایجاد کاربر ادمین";
     }
 
     async Task HandelUser()
