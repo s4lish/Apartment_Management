@@ -3,58 +3,48 @@
 
 <h3>ایجاد کاربر ادمین</h3>
 
-<div class="row">
-    <div class="col-lg-6">
-        <EditForm Model="newUser" OnValidSubmit="HandelUser">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+<EditForm Model="newUser" OnValidSubmit="HandelUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
+    <MudItem xs="12" sm="6">
+        <MudGrid Spacing="2" Class="mt-8">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Name" Label="نام" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true" RequiredError="الزامی"></MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Family" Label="نام خانوادگی" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true" RequiredError="الزامی"></MudTextField>
 
-            <div class="form-group">
-                <label for="Name">نام</label>
-                <InputText class="form-control form-control-sm" id="Name" @bind-Value="newUser.Name" placeholder="نام" aria-describedby="نام کاربر جدید" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Username" Label="نام کاربری" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true" RequiredError="الزامی"></MudTextField>
 
-            </div>
-            <div class="form-group">
-                <label for="Family">نام خانوادگی</label>
-                <InputText class="form-control form-control-sm" id="Family" @bind-Value="newUser.Family" placeholder="نام خانوادگی" aria-describedby="نام خانوادگی کاربر جدید" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Password" Label="رمزعبور" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true" RequiredError="الزامی"></MudTextField>
 
-            </div>
-            <div class="form-group">
-                <label for="Username">نام کاربری</label>
-                <InputText class="form-control form-control-sm" id="Username" @bind-Value="newUser.Username" placeholder="نام کاربری" aria-describedby="نام کاربری کاربر جدید" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.ConfirmPassword" Label="تکرار رمز عبور" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
 
-            </div>
-            <div class="form-group">
-                <label for="password">رمز عبور</label>
-                <InputText type="password" class="form-control form-control-sm" id="password" @bind-Value="newUser.Password" placeholder="نام کاربری" aria-describedby="رمز عبور" />
-            </div>
-            <div class="form-group">
-                <label for="trypassword">تکرار رمزعبور</label>
-                <InputText type="password" class="form-control form-control-sm" id="trypassword" @bind-Value="newUser.ConfirmPassword" placeholder="تکرار رمزعبور" aria-describedby="تکرار رمزعبور" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Mobile" Label="تلفن همراه" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
 
-            </div>
-            <div class="form-group">
-                <label for="Mobile">تلفن همراه</label>
-                <InputText class="form-control form-control-sm" id="Mobile" @bind-Value="newUser.Mobile" placeholder="تلفن همراه ادمین" aria-describedby="تلفن همراه ادمین" />
+            </MudItem>
 
-            </div>      
-            <div class="form-group">
-                <label for="Email">ایمیل</label>
-                <InputText class="form-control form-control-sm" id="Email" @bind-Value="newUser.Email" placeholder="ایمیل " aria-describedby="ایمیل" />
+            <MudItem xs="12">
+                <MudTextField @bind-Value="newUser.Email" Label="ایمیل" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
 
-            </div>
-            <div class="row" style="margin-top:20px;">
-                <div class="col-md-6">
-                    <LoaderSpinner ButtonTitle="ثبت کاربر" Request=sendRequest btnType="btn-success" />
+            </MudItem>
+            <MudItem>
+                <LoaderSpinner ButtonTitle="ثبت کاربر" Request=sendRequest btnType="btn-success" />
 
-                </div>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
 
-            </div>
-        </EditForm>
-    </div>
-
-</div>
+</EditForm>
 
 
 @code {

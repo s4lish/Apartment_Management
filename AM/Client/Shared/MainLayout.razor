@@ -1,41 +1,62 @@
 ﻿@inherits LayoutComponentBase
+@inject ILocalStorageService _localStorage
+@inject IJSRuntime JSRuntime
+@inject NavigationManager _nav
+@inject IUserHttpService _user
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
-<BlazoredToasts />
+<BlazoredToasts ShowProgressBar="true"  />
 <UpdateAvailableDetector />
+
+
+
+
 
 <div class="page">
 
     <main>
         <CascadingValue Value="this">
             <article class="content">
-                <MudLayout>
-                    <MudAppBar Elevation="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-                        <MudText Typo="Typo.h6" Class="ml-3">@PageName</MudText>
-                        <MudSpacer />
-                    </MudAppBar>
-                    <MudDrawer @bind-Open="@_drawerOpen"  ClipMode="DrawerClipMode.Always" Elevation="2">
-                        <MudNavMenu>
-                        <MudNavLink Href="/" Match="NavLinkMatch.All">صفحه اصلی</MudNavLink>
-                        <MudNavLink Href="help">راهنما</MudNavLink>
-                        <MudNavGroup Title="تنظیمات" Expanded="false">
-                            <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
-                            <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
-                        </MudNavGroup>
-                        <MudNavLink Href="unit">واحد</MudNavLink>
-                    </MudNavMenu>
+                <MudRTLProvider RightToLeft="true">
+
+                    <MudThemeProvider Theme="MyCustomTheme" IsDarkMode="_isDarkMode" />
+                    <MudDialogProvider />
+                    <MudSnackbarProvider />
 
 
-                        <div style="bottom:10px;margin-right:10px;position: absolute; font-size:12px;">نسخه 1.3</div>
-                    </MudDrawer>
-                    <MudMainContent>
-                        @Body
-                    </MudMainContent>
-                </MudLayout>
+                    <MudLayout>
+                        <MudAppBar Elevation="1">
+                            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                            <MudText Typo="Typo.h6" Class="mr-3">@PageName</MudText>
+                            <MudSpacer />
+                            @if(_nav.Uri != _nav.BaseUri){
+                                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => backPage())" />
+                            }
+                        </MudAppBar>
+                        <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+                            <MudDrawerHeader>
+                                <MudText Typo="Typo.h5" Class="mt-1">آپارتمان ما</MudText>
+                            </MudDrawerHeader>
+                            <MudNavMenu Style="font-size:17px;">
+                                <MudNavLink Href="/" Match="NavLinkMatch.All">صفحه اصلی</MudNavLink>
+                                <MudNavLink Href="apartment/new">آپارتمان</MudNavLink>
+
+                                <MudNavLink Href="help">راهنما</MudNavLink>
+                                <MudNavGroup Title="تنظیمات" Expanded="true" >
+                                    <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Info" Class="ma-4" T="bool" Label="حالت شب" />
+                                </MudNavGroup>
+                                <MudNavLink Href="unit">واحد</MudNavLink>
+                            </MudNavMenu>
+
+
+                            <Version />
+                        </MudDrawer>
+                        <MudMainContent>
+                            
+                            @Body
+                        </MudMainContent>
+                    </MudLayout>
+                </MudRTLProvider>
+
             </article>
         </CascadingValue>
 
@@ -44,11 +65,30 @@
 </div>
 
 @code{
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
+
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Typography = new Typography()
+            {
+                Default = new Default()
+                {
+                    FontFamily = new[] { "IRANSans" }
+                }
+            }
+        };
+
+
     bool _drawerOpen = false;
+    private bool isdarkMode;
+    private bool _isDarkMode
+    {
+        get { return isdarkMode; }
+        set
+        {
+            isdarkMode = value;
+            _localStorage.SetItemAsync<bool>("darkMode", value);
+
+        } }
     private string PageName = string.Empty;
     public string Title
     {
@@ -64,5 +104,20 @@
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isDarkMode = await _localStorage.GetItemAsync<bool>("darkMode");
+
+        await _user.CheckUserIs();
+
+    }
+
+    private async void backPage(){
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+
+
 
 }

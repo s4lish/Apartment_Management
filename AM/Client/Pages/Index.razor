@@ -1,10 +1,7 @@
 ﻿@page "/"
-@inject IUserHttpService _user
 
-<h1> سلام 6745!</h1>
+<h1> سلام!</h1>
 به برنامه آپارتمان من خوش آمدید.
-
-@isUser
 
 @code{
     [CascadingParameter]
@@ -16,17 +13,7 @@
     {
      
         Layout.Title = "صفحه اصلی";
-        var check = await _user.CheckUserIs();
 
-        if(check == true){
-            isUser = "کاربر وجود دارد";
-        }
-        else if(check == false){
-            isUser = "کاربر نیست";
-        }
-        else{
-            isUser = "خطا در دریافت اطلاعات";
-        }
     }
 
 }

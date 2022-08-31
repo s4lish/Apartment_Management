@@ -1,0 +1,72 @@
+﻿@page "/apartment/new"
+@inject IApartmentHttpService _apartment
+
+<h3>اطلاعات آپارتمان</h3>
+
+
+        <EditForm Model="apartment" OnValidSubmit="HandelUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <MudItem xs="12" sm="6">
+                <MudGrid Spacing="2" Class="mt-8">
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="apartment.Title" Label="نام مجتمع" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="apartment.Address" Label="آدرس" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+                    </MudItem>
+                    <MudItem xs="12" >
+                        <MudTextField @bind-Value="apartment.PhoneNumber" Label="شماره تماس" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudNumericField @bind-Value="apartment.UnitNumber" Label="تعداد واحد" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
+
+                    </MudItem>
+                    <MudItem>
+                        <LoaderSpinner ButtonTitle="ثبت اطلاعات آپارتمان" Request=sendRequest btnType="btn-success" />
+
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+        </EditForm>
+
+
+
+@code {
+    ApartmentInfoView apartment = new ApartmentInfoView();
+    bool sendRequest = false;
+
+    [CascadingParameter]
+    public MainLayout Layout { get; set; } = new MainLayout();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        sendRequest = true;
+
+        Layout.Title = "اطلاعات آپارتمان";
+
+        apartment = await _apartment.Get();
+
+        sendRequest = false;
+
+    }
+
+    async Task HandelUser()
+    {
+        sendRequest = true;
+
+        var state = await _apartment.SetInfo(apartment);
+
+        if (state)
+        {
+            //apartment = new ApartmentInfoView();
+        }
+        sendRequest = false;
+    }
+}

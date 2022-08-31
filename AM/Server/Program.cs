@@ -6,7 +6,7 @@ global using AM.Shared.ViewModel;
 
 global using AM.Server.Services.UserService;
 global using AM.Server.Services.PublicService;
-
+global using AM.Server.Services.ApartmentService;
 
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Text.Json.Serialization;
@@ -50,6 +50,7 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IPublicService, PubliceService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IApartmentService, ApartmentService>();
 
 var app = builder.Build();
 
@@ -76,6 +77,8 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+
 
 using (var scope = app.Services.CreateScope())
 {

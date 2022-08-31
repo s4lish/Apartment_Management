@@ -1,6 +1,4 @@
-﻿using AM.Shared.ViewModel;
-using Blazored.Toast.Services;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
