@@ -4,7 +4,7 @@
     {
         bool VerifyPasswordHash(string password, byte[] hash, byte[] salt);
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
-        string CreateToken(string user, int Id, int min);
+        string CreateToken(string user, int Id, string Role, int hour);
 
     }
 }

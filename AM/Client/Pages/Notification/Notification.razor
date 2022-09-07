@@ -1,0 +1,56 @@
+﻿@page "/notification/send"
+@inject INotificationHttpService _not
+<h3>ارسال اطلاعیه</h3>
+
+
+<EditForm Model="noti" OnValidSubmit="HandelUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <MudItem xs="12" sm="6">
+        <MudGrid Spacing="2" Class="mt-8">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="noti.Title" Label="عنوان اطلاعیه" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="noti.Message" Label="متن اطلاعیه" Variant="Variant.Outlined" Lines="10" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem>
+                <LoaderSpinner ButtonTitle="ارسال برای تمامی واحد ها" Request=sendRequest btnType="btn-success" />
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+</EditForm>
+
+@code {
+    Notifications noti = new Notifications();
+    bool sendRequest = false;
+
+    [CascadingParameter]
+    public MainLayout Layout { get; set; } = new MainLayout();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        sendRequest = true;
+
+        Layout.Title = "ارسال اطلاعیه";
+
+
+        sendRequest = false;
+
+    }
+
+    async Task HandelUser()
+    {
+        sendRequest = true;
+
+        //await _not.SendNotification(noti);
+
+        await Layout.SendNotification(noti);
+        noti = new Notifications();
+        
+        sendRequest = false;
+    }
+}

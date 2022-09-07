@@ -3,14 +3,27 @@ global using AM.Server.Data;
 global using AM.Server.Data.DataModel;
 global using AutoMapper;
 global using AM.Shared.ViewModel;
+global using AM.Shared.ViewModel.Pagination;
+global using Microsoft.AspNetCore.Components.Authorization;
 
 global using AM.Server.Services.UserService;
 global using AM.Server.Services.PublicService;
 global using AM.Server.Services.ApartmentService;
+global using AM.Server.Services.UnitService;
+global using AM.Server.Services.AuthService;
+global using AM.Server.Services.NotificationService;
+
+global using AM.Server.Paging;
+global using Microsoft.AspNetCore.Authorization;
 
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Text.Json.Serialization;
 using AM.Server;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using AM.Client.Services.LoginService;
+using AM.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +64,24 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<IPublicService, PubliceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IApartmentService, ApartmentService>();
+builder.Services.AddScoped<IUnitService, UnitService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+{
+    opt.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    };
+
+});
+
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -75,10 +106,14 @@ app.UseRouting();
 
 
 app.MapRazorPages();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
-
+app.MapHub<NotificationHub>("/notifi");
 
 using (var scope = app.Services.CreateScope())
 {

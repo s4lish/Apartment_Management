@@ -50,6 +50,70 @@ namespace AM.Server.Migrations
                     b.ToTable("ApartmentInfo");
                 });
 
+            modelBuilder.Entity("AM.Server.Data.DataModel.UnitInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Device")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IPAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("MalekIsThere")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MobileMalek")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MobileMostajer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameFamilyMalek")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameFamilyMostajer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NumberParking")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NumberUnit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("isResidence")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UnitInfo");
+                });
+
             modelBuilder.Entity("AM.Server.Data.DataModel.User", b =>
                 {
                     b.Property<int>("Id")

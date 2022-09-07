@@ -1,5 +1,6 @@
 ﻿@page "/apartment/new"
 @inject IApartmentHttpService _apartment
+@attribute [Authorize(Roles ="Admin")]
 
 <h3>اطلاعات آپارتمان</h3>
 
@@ -12,11 +13,9 @@
                 <MudGrid Spacing="2" Class="mt-8">
                     <MudItem xs="12">
                         <MudTextField @bind-Value="apartment.Title" Label="نام مجتمع" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-
                     </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="apartment.Address" Label="آدرس" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-
                     </MudItem>
                     <MudItem xs="12" >
                         <MudTextField @bind-Value="apartment.PhoneNumber" Label="شماره تماس" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>

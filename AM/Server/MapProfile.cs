@@ -7,6 +7,7 @@ public class MapProfile : Profile
     {
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<ApartmentInfo, ApartmentInfoView>().ReverseMap();
+        CreateMap<UnitInfo, UnitInfoView>().ReverseMap();
 
         //CreateMap<LocationBackUp, LocationBackUpDTO>().ReverseMap(); // do tarafe
 

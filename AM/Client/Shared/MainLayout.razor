@@ -3,13 +3,12 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager _nav
 @inject IUserHttpService _user
+@inject AuthenticationStateProvider AuthStateProvider
+@inject INotificationHttpService _noti
+@inject INotificationService _NotificationService
 
-<BlazoredToasts ShowProgressBar="true"  />
+<BlazoredToasts ShowProgressBar="true" />
 <UpdateAvailableDetector />
-
-
-
-
 
 <div class="page">
 
@@ -21,38 +20,61 @@
                     <MudThemeProvider Theme="MyCustomTheme" IsDarkMode="_isDarkMode" />
                     <MudDialogProvider />
                     <MudSnackbarProvider />
-
-
                     <MudLayout>
                         <MudAppBar Elevation="1">
                             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
                             <MudText Typo="Typo.h6" Class="mr-3">@PageName</MudText>
                             <MudSpacer />
-                            @if(_nav.Uri != _nav.BaseUri){
+                            @if (_nav.Uri != _nav.BaseUri)
+                            {
                                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => backPage())" />
                             }
                         </MudAppBar>
+
+
+
                         <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
                             <MudDrawerHeader>
                                 <MudText Typo="Typo.h5" Class="mt-1">آپارتمان ما</MudText>
                             </MudDrawerHeader>
                             <MudNavMenu Style="font-size:17px;">
-                                <MudNavLink Href="/" Match="NavLinkMatch.All">صفحه اصلی</MudNavLink>
-                                <MudNavLink Href="apartment/new">آپارتمان</MudNavLink>
+                                <AuthorizeView Roles="Admin">
+                                    <MudNavLink Href="/" Match="NavLinkMatch.All">صفحه اصلی</MudNavLink>
+                                    <MudNavLink Href="apartment/new">آپارتمان</MudNavLink>
+                                    <MudNavLink Href="unit">واحد</MudNavLink>
+                                    <MudNavLink Href="notification/send">ارسال اطلاعیه</MudNavLink>
 
-                                <MudNavLink Href="help">راهنما</MudNavLink>
-                                <MudNavGroup Title="تنظیمات" Expanded="true" >
-                                    <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Info" Class="ma-4" T="bool" Label="حالت شب" />
-                                </MudNavGroup>
-                                <MudNavLink Href="unit">واحد</MudNavLink>
+                                    <MudNavLink Href="help">راهنما</MudNavLink>
+                                    <MudNavGroup Title="تنظیمات" Expanded="true">
+                                        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Info" Class="ma-4" T="bool" Label="حالت شب" />
+                                        @if(IsSupportedByBrowser){
+                                            <MudSwitch @bind-Checked="@_notPermision" Color="Color.Primary" Class="ma-1" T="bool" Label="دریافت اطلاعیه" />
+                                        }
+                                    </MudNavGroup>
+
+                                </AuthorizeView>
+
+                                <AuthorizeView Roles="Unit">
+                                    <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">داشبورد</MudNavLink>
+
+                                </AuthorizeView>
+
+                                <MudNavLink style="background-color:hsla(290, 60%, 70%, 0.1);" OnClick="()=>Logout()">خروج از حساب کاربری</MudNavLink>
+
                             </MudNavMenu>
 
 
                             <Version />
                         </MudDrawer>
                         <MudMainContent>
-                            
-                            @Body
+                            <ErrorBoundary>
+                                <ChildContent>
+                                    @Body
+                                </ChildContent>
+                                <ErrorContent>
+                                    <MudAlert AlertTextPosition="AlertTextPosition.Right" Severity="Severity.Error">خطایی رخ داده است. ارتباط خود با اینترنت را چک کنید . <MudIconButton Title="بررسی مجدد ارتباط" Color="Color.Warning" Icon="@Icons.Material.Filled.Repeat" OnClick="()=>RefreshPage()"></MudIconButton></MudAlert>
+                                </ErrorContent>
+                            </ErrorBoundary>
                         </MudMainContent>
                     </MudLayout>
                 </MudRTLProvider>
@@ -64,7 +86,7 @@
     </main>
 </div>
 
-@code{
+@code {
 
     MudTheme MyCustomTheme = new MudTheme()
         {
@@ -77,6 +99,10 @@
             }
         };
 
+    private HubConnection? hubConn;
+    private string? ConnectionStatusMessage;
+    private bool IsSupportedByBrowser;
+    private PermissionType permission = new PermissionType();
 
     bool _drawerOpen = false;
     private bool isdarkMode;
@@ -88,7 +114,26 @@
             isdarkMode = value;
             _localStorage.SetItemAsync<bool>("darkMode", value);
 
-        } }
+        }
+    }
+
+    private bool NotPermision;
+    private bool _notPermision {
+        get { return NotPermision; }
+        set {
+            NotPermision = value;
+            if(value){
+                AddPermision();
+            }
+            else{
+                RemovePermision();
+            }
+        }
+    }
+
+
+
+
     private string PageName = string.Empty;
     public string Title
     {
@@ -108,16 +153,93 @@
     protected override async Task OnInitializedAsync()
     {
         _isDarkMode = await _localStorage.GetItemAsync<bool>("darkMode");
+        _notPermision = await _localStorage.GetItemAsync<bool>("permisionNoti");
 
-        await _user.CheckUserIs();
+        IsSupportedByBrowser = await _NotificationService.IsSupportedByBrowserAsync();
+
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync(async () =>
+       {
+           //Console.WriteLine($"check Connection 10 sec {DateTime.Now}");
+
+           if (hubConn is null || hubConn.State == HubConnectionState.Disconnected)
+           {
+               await Start();
+           }
+       });
+        }, null, 0, 10000);
+
+
+
+        //await _user.CheckUserIs();
 
     }
 
-    private async void backPage(){
+    private async Task AddPermision(){
+        permission = await _NotificationService.RequestPermissionAsync();
+        await _localStorage.SetItemAsync<bool>("permisionNoti", true);
+ 
+    }
+    private async Task RemovePermision(){
+        await _localStorage.SetItemAsync<bool>("permisionNoti", false);
+
+    }
+
+    private async void backPage()
+    {
         await JSRuntime.InvokeVoidAsync("history.back");
     }
 
 
+    private async Task Logout()
+    {
+        await _localStorage.RemoveItemAsync("token");
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        _nav.NavigateTo("login");
 
+    }
+
+    private async Task Start()
+    {
+        //Console.WriteLine("get started");
+        try
+        {
+            hubConn = new HubConnectionBuilder().WithUrl(_nav.ToAbsoluteUri("/notifi")).Build();
+
+
+            hubConn.On<Notifications>("NotificationServer", async (notifi) =>
+            {
+                await _noti.ShowNotification(notifi);
+            });
+
+
+            await hubConn.StartAsync();
+            if (hubConn.State == HubConnectionState.Connected)
+                ConnectionStatusMessage = "Connection is established Successfully...";
+            else
+                ConnectionStatusMessage = "Connection is not established...";
+
+            //Console.WriteLine(ConnectionStatusMessage);
+
+        }
+        catch
+        {
+            //Console.WriteLine("Connection Problem");
+        }
+    }
+
+
+    public async Task SendNotification(Notifications noti)
+    {
+        if (hubConn is not null)
+        {
+            await hubConn.SendAsync("SendNotifiToAll", noti);
+        }
+    }
+
+    void RefreshPage(){
+        _nav.NavigateTo("/",true);
+    }
 
 }

@@ -1,0 +1,97 @@
+﻿@page "/unit/newunit"
+@inject IUnitHttpService _unit
+<h3>تعریف واحد جدید</h3>
+@attribute [Authorize(Roles = "Admin")]
+
+
+<EditForm Model="unit" OnValidSubmit="HandelUnit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <MudItem xs="12" sm="6">
+        <MudGrid Spacing="2" Class="mt-8">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="unit.NameFamilyMalek" AutoFocus="true" Label="نام و نام خانوادگی مالک" Required="true" RequiredError="الزامی" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="unit.MobileMalek" Label="شماره همراه مالک" Required="true" RequiredError="الزامی" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="unit.NumberUnit" Label="شماره واحد" Required="true" RequiredError="الزامی" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="unit.NumberParking" Label="شماره پارکینگ" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="12">
+                <MudText>آیا سکونت دارد ؟
+                    <MudSwitch @bind-Checked="unit.isResidence" Color="Color.Info" T="bool" />
+                </MudText>
+
+            </MudItem>
+            @if(unit.isResidence){
+                <MudItem xs="12">
+                    <MudText>
+                        آیا مالک سکونت دارد ؟
+                        <MudSwitch @bind-Checked="unit.MalekIsThere" Color="Color.Info" T="bool" />
+
+                    </MudText>
+
+                </MudItem>
+
+                if(!unit.MalekIsThere){
+
+                                <MudItem xs="12">
+                <MudTextField @bind-Value="unit.NameFamilyMostajer" Label="نام و نام خانوادگی مستاجر" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="unit.MobileMostajer" Label="شماره همراه مستاجر" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+
+
+                }
+
+
+            }
+
+            <MudItem>
+                <LoaderSpinner ButtonTitle="ثبت اطلاعات واحد" Request=sendRequest btnType="btn-success" />
+
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+</EditForm>
+
+
+@code {
+    UnitInfoView unit = new UnitInfoView();
+    bool sendRequest = false;
+
+    [CascadingParameter]
+    public MainLayout Layout { get; set; } = new MainLayout();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Layout.Title = "تعریف واحد جدید";
+    }
+
+    async Task HandelUnit()
+    {
+        sendRequest = true;
+
+        var state = await _unit.SetInfo(unit);
+
+        if (state)
+        {
+            unit = new UnitInfoView();
+
+        }
+        sendRequest = false;
+
+    }
+}

@@ -7,6 +7,7 @@ public class ApartmentDB : DbContext
 
     public DbSet<User> User { get; set; }
     public DbSet<ApartmentInfo> ApartmentInfo { get; set; }
+    public DbSet<UnitInfo> UnitInfo { get; set; }
 
 }
 

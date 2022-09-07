@@ -1,0 +1,48 @@
+﻿@attribute [Authorize(Roles ="Admin")]
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1">نام مالک : @unit.NameFamilyMalek</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1">شماره همراه مالک : @unit.MobileMalek</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1">واحد : @unit.NumberUnit</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1">شماره پارکینگ : @unit.NumberParking</MudText>
+            </MudItem>
+            @if(!unit.MalekIsThere){
+                <MudItem xs="12" sm="6">
+                    <MudText Typo="Typo.subtitle1">نام مستاجر : @unit.NameFamilyMostajer</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudText Typo="Typo.subtitle1">شماره همراه مستاجر : @unit.MobileMostajer</MudText>
+                </MudItem>
+
+            }
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1">رمزعبور : @unit.Password</MudText>
+            </MudItem>
+
+
+        </MudGrid>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">بازگشت</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public UnitInfoView unit { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+}
